@@ -31,5 +31,6 @@
             </tr>
         </table>
     </form>
+    <button onclick="window.location.href='/'">Back to Homepage</button>
 </body>
 </html>
