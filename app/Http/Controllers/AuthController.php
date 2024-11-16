@@ -34,15 +34,15 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
         return response()->json([
                 'status' => 'success',
                 'user' => $user,
-                'authorisation' => [
+                'authorization' => [
                     'token' => $token,
                     'type' => 'bearer',
                 ]
             ]);
-
     }
 
     public function register(Request $request){
@@ -58,8 +58,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $request->session()->put('success', 'Registration successful! Please log in.');
-        return redirect()->route('login');
+        return response()->json([
+                'status' => 'success',
+                'user' => $user,
+            ]);
     }
 
     public function logout()
