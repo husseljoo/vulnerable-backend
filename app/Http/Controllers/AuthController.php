@@ -64,6 +64,45 @@ class AuthController extends Controller
             ]);
     }
 
+    public function register_vulnerable(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $mysqli = new \mysqli(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
+        if ($mysqli->connect_error) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Database connection failed: ' . $mysqli->connect_error,
+            ], 500);
+        }
+
+
+        $name = $mysqli->real_escape_string($request->input('name'));
+        $email = $mysqli->real_escape_string($request->input('email'));
+        $password = $mysqli->real_escape_string($request->input('password'));
+        $hashedPassword = bcrypt($request->input('password'));
+        $escapedPassword = $mysqli->real_escape_string($hashedPassword);
+        $createdAt = date('Y-m-d H:i:s');
+
+        $query = "INSERT INTO users (name, email, email_verified_at, password, remember_token, created_at, updated_at) VALUES ('$name', '$email', NULL, '$escapedPassword', NULL, '$createdAt', '$createdAt')";
+
+        if (!$mysqli->query($query)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Query failed: ' . $mysqli->error,
+            ], 500);
+        }
+
+        return response()->json([
+                'status' => 'success',
+                'user' => $name,
+            ]);
+    }
+
     public function logout()
     {
         Auth::logout();
