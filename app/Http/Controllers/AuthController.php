@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -66,11 +67,12 @@ class AuthController extends Controller
 
     public function register_vulnerable(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
+
+        /* $request->validate([ */
+        /*     'name' => 'required|string|max:255', */
+        /*     'email' => 'required|string|email|max:255|unique:users', */
+        /*     'password' => 'required|string|min:6', */
+        /* ]); */
 
         $mysqli = new \mysqli(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
         if ($mysqli->connect_error) {
@@ -80,22 +82,26 @@ class AuthController extends Controller
             ], 500);
         }
 
+        /* $name = $request->input('name'); */
+        /* $email = $request->input('email'); */
+        /* $password = $request->input('password'); */
+        /* $escapedPassword = bcrypt($request->input('password')); */
 
         $name = $mysqli->real_escape_string($request->input('name'));
         $email = $mysqli->real_escape_string($request->input('email'));
         $password = $mysqli->real_escape_string($request->input('password'));
         $hashedPassword = bcrypt($request->input('password'));
         $escapedPassword = $mysqli->real_escape_string($hashedPassword);
-        $createdAt = date('Y-m-d H:i:s');
 
-        $query = "INSERT INTO users (name, email, email_verified_at, password, remember_token, created_at, updated_at) VALUES ('$name', '$email', NULL, '$escapedPassword', NULL, '$createdAt', '$createdAt')";
 
-        if (!$mysqli->query($query)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Query failed: ' . $mysqli->error,
-            ], 500);
-        }
+        /* if (!$mysqli->query($query)) { */
+        /*     return response()->json([ */
+        /*         'status' => 'error', */
+        /*         'message' => 'Query failed: ' . $mysqli->error, */
+        /*     ], 500); */
+        /* } */
+
+        DB::unprepared($query);
 
         return response()->json([
                 'status' => 'success',
