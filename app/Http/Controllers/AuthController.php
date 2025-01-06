@@ -82,24 +82,23 @@ class AuthController extends Controller
             ], 500);
         }
 
-        /* $name = $request->input('name'); */
-        /* $email = $request->input('email'); */
-        /* $password = $request->input('password'); */
-        /* $escapedPassword = bcrypt($request->input('password')); */
-
         $name = $mysqli->real_escape_string($request->input('name'));
         $email = $mysqli->real_escape_string($request->input('email'));
         $password = $mysqli->real_escape_string($request->input('password'));
         $hashedPassword = bcrypt($request->input('password'));
-        $escapedPassword = $mysqli->real_escape_string($hashedPassword);
 
+        Log::info($email);
+        echo "\n";
+        $query = "INSERT INTO users(name, password, email) values (\"";
+        $query .= $name;
+        $query .= "\", \"";
+        $query .= $hashedPassword;
+        $query .= "\", \"";
+        $query .= $email;
+        $query .= "\")";
 
-        /* if (!$mysqli->query($query)) { */
-        /*     return response()->json([ */
-        /*         'status' => 'error', */
-        /*         'message' => 'Query failed: ' . $mysqli->error, */
-        /*     ], 500); */
-        /* } */
+        Log::info($query);
+        echo "\n";
 
         DB::unprepared($query);
 
